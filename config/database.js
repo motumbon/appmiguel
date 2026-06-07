@@ -13,11 +13,17 @@ if (process.env.DATABASE_URL) {
     logging: false
   });
 } else {
-  sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: path.join(__dirname, '..', 'database.sqlite'),
-    logging: false
-  });
+  try {
+    require('sqlite3');
+    sequelize = new Sequelize({
+      dialect: 'sqlite',
+      storage: path.join(__dirname, '..', 'database.sqlite'),
+      logging: false
+    });
+  } catch (e) {
+    console.error('No se encontró DATABASE_URL ni sqlite3. Configure DATABASE_URL para usar PostgreSQL.');
+    process.exit(1);
+  }
 }
 
 module.exports = sequelize;
